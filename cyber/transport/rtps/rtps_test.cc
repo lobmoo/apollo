@@ -17,9 +17,10 @@
 #include <string>
 #include <utility>
 
+#include "gtest/gtest.h"
+
 #include "fastcdr/Cdr.h"
 #include "fastcdr/exceptions/BadParamException.h"
-#include "gtest/gtest.h"
 
 #include "cyber/common/global_data.h"
 #include "cyber/common/log.h"
@@ -49,7 +50,7 @@ TEST(AttributesFillerTest, fill_in_pub_attr_test) {
   EXPECT_EQ(eprosima::fastrtps::BEST_EFFORT_RELIABILITY_QOS,
             attrs.qos.m_reliability.kind);
   AINFO << "heartbeat period: " << attrs.times.heartbeatPeriod.seconds << ", "
-        << attrs.times.heartbeatPeriod.fraction;
+        << attrs.times.heartbeatPeriod.fraction();
   qos.set_depth(1024);
   attrs.topic.historyQos.depth = 512;
   filler.FillInPubAttr("channel", qos, &attrs);
@@ -70,7 +71,7 @@ TEST(AttributesFillerTest, fill_in_pub_attr_test) {
   EXPECT_EQ(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS,
             attrs.qos.m_reliability.kind);
   AINFO << "heartbeat period: " << attrs.times.heartbeatPeriod.seconds << ", "
-        << attrs.times.heartbeatPeriod.fraction;
+        << attrs.times.heartbeatPeriod.fraction();
 
   qos.set_history(QosHistoryPolicy::HISTORY_SYSTEM_DEFAULT);
   qos.set_durability(QosDurabilityPolicy::DURABILITY_SYSTEM_DEFAULT);
@@ -84,11 +85,11 @@ TEST(AttributesFillerTest, fill_in_pub_attr_test) {
   EXPECT_EQ(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS,
             attrs.qos.m_reliability.kind);
   AINFO << "heartbeat period: " << attrs.times.heartbeatPeriod.seconds << ", "
-        << attrs.times.heartbeatPeriod.fraction;
+        << attrs.times.heartbeatPeriod.fraction();
   qos.set_mps(0);
   filler.FillInPubAttr("channel", qos, &attrs);
   AINFO << "heartbeat period: " << attrs.times.heartbeatPeriod.seconds << ", "
-        << attrs.times.heartbeatPeriod.fraction;
+        << attrs.times.heartbeatPeriod.fraction();
 }
 
 TEST(AttributesFillerTest, fill_in_sub_attr_test) {

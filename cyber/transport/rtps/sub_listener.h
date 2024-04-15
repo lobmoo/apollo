@@ -23,13 +23,15 @@
 #include <mutex>
 #include <string>
 
-#include "cyber/transport/message/message_info.h"
-#include "cyber/transport/rtps/underlay_message.h"
-#include "cyber/transport/rtps/underlay_message_type.h"
+#include "fastdds/rtps/common/MatchingInfo.h"
 #include "fastrtps/Domain.h"
 #include "fastrtps/subscriber/SampleInfo.h"
 #include "fastrtps/subscriber/Subscriber.h"
 #include "fastrtps/subscriber/SubscriberListener.h"
+
+#include "cyber/transport/message/message_info.h"
+#include "cyber/transport/rtps/underlay_message.h"
+#include "cyber/transport/rtps/underlay_message_type.h"
 
 namespace apollo {
 namespace cyber {
@@ -48,8 +50,9 @@ class SubListener : public eprosima::fastrtps::SubscriberListener {
   virtual ~SubListener();
 
   void onNewDataMessage(eprosima::fastrtps::Subscriber* sub);
-  void onSubscriptionMatched(eprosima::fastrtps::Subscriber* sub,
-                             eprosima::fastrtps::MatchingInfo& info);  // NOLINT
+  void onSubscriptionMatched(
+      eprosima::fastrtps::Subscriber* sub,
+      eprosima::fastrtps::rtps::MatchingInfo& info);  // NOLINT
 
  private:
   NewMsgCallback callback_;

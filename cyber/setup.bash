@@ -30,6 +30,19 @@ pathprepend ${bazel_bin_path}/cyber/python/internal PYTHONPATH
 pathprepend "${PYTHON_INSTALL_PATH}/lib/python${PYTHON_VERSION}/site-packages" PYTHONPATH
 pathprepend "${PYTHON_INSTALL_PATH}/bin/" PATH
 
+
+if ! "${APOLLO_IN_DOCKER}" && \
+    [ "${platform}" == "x86_64" ] && \
+    ! grep -q "11th Gen Intel(R) Core(TM) i7-1165G7" <<< "$CPU_MODEL"; then
+    export LD_LIBRARY_PATH=/apollo/third_party/fastrtps/x86_64_lib:$LD_LIBRARY_PATH   
+elif [ "${platform}" == "aarch64" ]; then
+    export LD_LIBRARY_PATH=/apollo/third_party/fastrtps/aarch64_lib:$LD_LIBRARY_PATH 
+else
+#movex
+    export LD_LIBRARY_PATH=/apollo/third_party/fastrtps/x86_64_lib:$LD_LIBRARY_PATH     
+fi
+
+
 export CYBER_DOMAIN_ID=80
 export CYBER_IP=127.0.0.1
 
