@@ -25,6 +25,7 @@
 #include "cyber/transport/rtps/underlay_message.h"
 #include "cyber/transport/rtps/underlay_message_type.h"
 
+
 namespace apollo {
 namespace cyber {
 namespace service_discovery {
@@ -40,6 +41,9 @@ Manager::Manager()
       channel_name_(""),
       publisher_(nullptr),
       subscriber_(nullptr),
+      writer_(nullptr),
+
+
       listener_(nullptr) {
   host_name_ = common::GlobalData::Instance()->HostName();
   process_id_ = common::GlobalData::Instance()->ProcessId();
@@ -56,7 +60,7 @@ bool Manager::StartDiscovery(RtpsParticipant* participant) {
   }
   if (!CreatePublisher(participant) || !CreateSubscriber(participant)) {
     AERROR << "create publisher or subscriber failed.";
-    StopDiscovery();
+    StopDiscovery(participant);
     return false;
   }
   return true;
@@ -66,23 +70,13 @@ void Manager::StopDiscovery() {
   if (!is_discovery_started_.exchange(false)) {
     return;
   }
-
   {
     std::lock_guard<std::mutex> lg(lock_);
+ 
     if (publisher_ != nullptr) {
-      eprosima::fastrtps::Domain::removePublisher(publisher_);
-      publisher_ = nullptr;
-    }
-  }
-
-  if (subscriber_ != nullptr) {
-    eprosima::fastrtps::Domain::removeSubscriber(subscriber_);
-    subscriber_ = nullptr;
-  }
-
-  if (listener_ != nullptr) {
-    delete listener_;
-    listener_ = nullptr;
+        participant->delete_publisher(publisher_);
+        publisher_ = nullptr;
+    } 
   }
 }
 
@@ -91,7 +85,7 @@ void Manager::Shutdown() {
     return;
   }
 
-  StopDiscovery();
+  StopDiscovery(participant);
   signal_.DisconnectAllSlots();
 }
 
@@ -138,27 +132,49 @@ void Manager::RemoveChangeListener(const ChangeConnection& conn) {
 }
 
 bool Manager::CreatePublisher(RtpsParticipant* participant) {
-  RtpsPublisherAttr pub_attr;
-  RETURN_VAL_IF(
-      !AttributesFiller::FillInPubAttr(
-          channel_name_, QosProfileConf::QOS_PROFILE_TOPO_CHANGE, &pub_attr),
-      false);
-  publisher_ =
-      eprosima::fastrtps::Domain::createPublisher(participant, pub_attr);
-  return publisher_ != nullptr;
+  PublisherQos pubqos = eprosima::fastdds::dds::PUBLISHER_QOS_DEFAULT;
+  // RETURN_VAL_IF(
+  //     !AttributesFiller::FillInPubAttr(
+  //         channel_name_, QosProfileConf::QOS_PROFILE_TOPO_CHANGE, &pub_attr),
+  //     false);
+  // publisher_ =
+  //     eprosima::fastrtps::Domain::createPublisher(participant, pub_attr);
+  publisher_ = participant->create_publisher(pubqos,nullptr);
+  if(nullptr == publisher_)
+  {
+     return false;
+  }
+  TopicQos tqos = eprosima::fastdds::dds::TOPIC_QOS_DEFAULT;
+  topic_ = participant->create_topic("HelloWorldTopic","HelloWorld",tqos);
+  if(topic_ == publisher_)
+  {
+     return false;
+  }
+  DataWriterQos wqos = eprosima::fastdds::dds::DATAWRITER_QOS_DEFAULT;
+  writer_ = publisher_->create_datawriter(topic_,wqos, &listener_);
+  if (nullptr ==  writer_)
+    {
+       return false;
+    }
+
+  return participant != nullptr;
 }
 
 bool Manager::CreateSubscriber(RtpsParticipant* participant) {
-  RtpsSubscriberAttr sub_attr;
-  RETURN_VAL_IF(
-      !AttributesFiller::FillInSubAttr(
-          channel_name_, QosProfileConf::QOS_PROFILE_TOPO_CHANGE, &sub_attr),
-      false);
+  // RtpsSubscriberAttr sub_attr;
+  // RETURN_VAL_IF(
+  //     !AttributesFiller::FillInSubAttr(
+  //         channel_name_, QosProfileConf::QOS_PROFILE_TOPO_CHANGE, &sub_attr),
+  //     false);
+  SubscriberQos sqos = eprosima::fastdds::dds::SUBSCRIBER_QOS_DEFAULT;
+ 
+
   listener_ = new SubscriberListener(
       std::bind(&Manager::OnRemoteChange, this, std::placeholders::_1));
 
-  subscriber_ = eprosima::fastrtps::Domain::createSubscriber(
-      participant, sub_attr, listener_);
+  // subscriber_ = eprosima::fastrtps::Domain::createSubscriber(
+  //     participant, sub_attr, listener_);
+      subscriber_ = participant_->create_subscriber(sqos, listener_);
   return subscriber_ != nullptr;
 }
 
@@ -210,8 +226,8 @@ bool Manager::Publish(const ChangeMsg& msg) {
   RETURN_VAL_IF(!message::SerializeToString(msg, &m.data()), false);
   {
     std::lock_guard<std::mutex> lg(lock_);
-    if (publisher_ != nullptr) {
-      return publisher_->write(reinterpret_cast<void*>(&m));
+    if (writer_ != nullptr) {
+      return writer_->write(reinterpret_cast<void*>(&m));
     }
   }
   return true;

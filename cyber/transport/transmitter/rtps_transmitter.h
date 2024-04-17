@@ -28,11 +28,17 @@
 #include "fastrtps/Domain.h"
 #include "fastrtps/attributes/PublisherAttributes.h"
 #include "fastrtps/participant/Participant.h"
-#include "fastrtps/publisher/Publisher.h"
+#include "fastdds/dds/publisher/qos/PublisherQos.hpp"
+#include "fastdds/dds/publisher/DataWriter.hpp"
+
 
 namespace apollo {
 namespace cyber {
 namespace transport {
+
+
+using PublisherQos = eprosima::fastdds::dds::PublisherQos;
+
 
 template <typename M>
 class RtpsTransmitter : public Transmitter<M> {
@@ -52,7 +58,10 @@ class RtpsTransmitter : public Transmitter<M> {
   bool Transmit(const M& msg, const MessageInfo& msg_info);
 
   ParticipantPtr participant_;
-  eprosima::fastrtps::Publisher* publisher_;
+  eprosima::fastdds::dds::Publisher* publisher_;
+  eprosima::fastdds::dds::DataWriter* writer_;
+  eprosima::fastdds::dds::Topic* topic_;
+  
 };
 
 template <typename M>
@@ -72,13 +81,25 @@ void RtpsTransmitter<M>::Enable() {
   }
 
   RETURN_IF_NULL(participant_);
-
-  eprosima::fastrtps::PublisherAttributes pub_attr;
-  RETURN_IF(!AttributesFiller::FillInPubAttr(
-      this->attr_.channel_name(), this->attr_.qos_profile(), &pub_attr));
-  publisher_ = eprosima::fastrtps::Domain::createPublisher(
-      participant_->fastrtps_participant(), pub_attr);
-  RETURN_IF_NULL(publisher_);
+  PublisherQos pubqos = eprosima::fastdds::dds::PUBLISHER_QOS_DEFAULT;
+  // eprosima::fastrtps::PublisherAttributes pub_attr;
+  // RETURN_IF(!AttributesFiller::FillInPubAttr(
+  //     this->attr_.channel_name(), this->attr_.qos_profile(), &pub_attr));
+ 
+  publisher_ = participant_->fastrtps_participant()->create_publisher(pubqos,nullptr);
+  if(nullptr == publisher_)
+  {
+     return ;
+  }
+  eprosima::fastdds::dds::TopicQos tqos = eprosima::fastdds::dds::TOPIC_QOS_DEFAULT;
+  topic_ = participant_->fastrtps_participant()->create_topic("HelloWorldTopic","HelloWorld",tqos);
+  if(nullptr == topic_)
+  {
+     return;
+  }
+  eprosima::fastdds::dds::DataWriterQos wqos = eprosima::fastdds::dds::DATAWRITER_QOS_DEFAULT;
+  writer_ = publisher_->create_datawriter(topic_,wqos);
+  RETURN_IF_NULL(writer_);
   this->enabled_ = true;
 }
 
@@ -122,7 +143,7 @@ bool RtpsTransmitter<M>::Transmit(const M& msg, const MessageInfo& msg_info) {
   if (participant_->is_shutdown()) {
     return false;
   }
-  return publisher_->write(reinterpret_cast<void*>(&m), wparams);
+  return writer_->write(reinterpret_cast<void*>(&m), wparams);
 }
 
 }  // namespace transport

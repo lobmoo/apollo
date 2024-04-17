@@ -32,24 +32,37 @@ SubscriberListener::~SubscriberListener() {
   callback_ = nullptr;
 }
 
-void SubscriberListener::onNewDataMessage(eprosima::fastrtps::Subscriber* sub) {
-  RETURN_IF_NULL(callback_);
+// void SubscriberListener::onNewDataMessage(eprosima::fastrtps::Subscriber* sub) {
+//   RETURN_IF_NULL(callback_);
 
-  std::lock_guard<std::mutex> lock(mutex_);
-  eprosima::fastrtps::SampleInfo_t m_info;
-  cyber::transport::UnderlayMessage m;
-  RETURN_IF(!sub->takeNextData(reinterpret_cast<void*>(&m), &m_info));
-  RETURN_IF(m_info.sampleKind != eprosima::fastrtps::rtps::ALIVE);
+//   std::lock_guard<std::mutex> lock(mutex_);
+//   eprosima::fastrtps::SampleInfo_t m_info;
+//   cyber::transport::UnderlayMessage m;
+//   RETURN_IF(!sub->takeNextData(reinterpret_cast<void*>(&m), &m_info));
+//   RETURN_IF(m_info.sampleKind != eprosima::fastrtps::rtps::ALIVE);
 
-  callback_(m.data());
+//   callback_(m.data());
+// }
+
+void SubscriberListener::on_data_available(
+        eprosima::fastdds::dds::DataReader* reader)
+{ 
+    RETURN_IF_NULL(callback_);
+    std::lock_guard<std::mutex> lock(mutex_);
+    eprosima::fastdds::dds::SampleInfo m_info;
+    cyber::transport::UnderlayMessage m;
+    RETURN_IF(!reader->take_next_sample(reinterpret_cast<void*>(&m), &m_info));
+    RETURN_IF(m_info.instance_state == eprosima::fastdds::dds::ALIVE_INSTANCE_STATE);
+    callback_(m.data());
 }
 
-void SubscriberListener::onSubscriptionMatched(
-    eprosima::fastrtps::Subscriber* sub,
-    eprosima::fastrtps::rtps::MatchingInfo& info) {
-  (void)sub;
-  (void)info;
+
+void SubscriberListener::on_subscription_matched(eprosima::fastdds::dds::DataReader* reader,const eprosima::fastdds::dds::SubscriptionMatchedStatus& info)
+{
+    (void)reader;
+    (void)info;
 }
+
 
 }  // namespace service_discovery
 }  // namespace cyber

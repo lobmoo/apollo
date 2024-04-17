@@ -30,9 +30,10 @@ ParticipantListener::~ParticipantListener() {
   callback_ = nullptr;
 }
 
-void ParticipantListener::onParticipantDiscovery(
-    eprosima::fastrtps::Participant* p,
-    eprosima::fastrtps::rtps::ParticipantDiscoveryInfo info) {
+
+void ParticipantListener::on_participant_discovery(
+    eprosima::fastdds::dds::DomainParticipant* p,
+                eprosima::fastrtps::rtps::ParticipantDiscoveryInfo&& info){
   RETURN_IF_NULL(callback_);
   (void)p;
   std::lock_guard<std::mutex> lock(mutex_);

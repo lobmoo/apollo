@@ -28,6 +28,10 @@
 #include "fastrtps/participant/Participant.h"
 #include "fastrtps/publisher/Publisher.h"
 #include "fastrtps/subscriber/Subscriber.h"
+#include "fastdds/dds/domain/DomainParticipant.hpp"
+#include "fastdds/dds/publisher/qos/PublisherQos.hpp"
+#include "fastdds/dds/publisher/DataWriter.hpp"
+#include "fastdds/dds/publisher/qos/DataWriterQos.hpp"
 
 #include "cyber/base/signal.h"
 #include "cyber/proto/topology_change.pb.h"
@@ -54,9 +58,11 @@ class Manager {
   using ChangeFunc = std::function<void(const ChangeMsg&)>;
   using ChangeConnection = base::Connection<const ChangeMsg&>;
 
-  using RtpsParticipant = eprosima::fastrtps::Participant;
-  using RtpsPublisherAttr = eprosima::fastrtps::PublisherAttributes;
-  using RtpsSubscriberAttr = eprosima::fastrtps::SubscriberAttributes;
+  using RtpsParticipant = eprosima::fastdds::dds::DomainParticipant;
+  using PublisherQos = eprosima::fastdds::dds::PublisherQos;
+  using SubscriberQos = eprosima::fastdds::dds::SubscriberQos;
+  using DataWriterQos = eprosima::fastdds::dds::DataWriterQos;
+  using TopicQos  = eprosima::fastdds::dds::TopicQos;
 
   /**
    * @brief Construct a new Manager object
@@ -158,9 +164,12 @@ class Manager {
   std::string host_name_;
   int process_id_;
   std::string channel_name_;
-  eprosima::fastrtps::Publisher* publisher_;
   std::mutex lock_;
-  eprosima::fastrtps::Subscriber* subscriber_;
+  eprosima::fastdds::dds::Publisher* publisher_;
+  eprosima::fastdds::dds::Subscriber* subscriber_;
+  eprosima::fastdds::dds::DataWriter* writer_;
+  eprosima::fastdds::dds::Topic* topic_;
+
   SubscriberListener* listener_;
 
   ChangeSignal signal_;

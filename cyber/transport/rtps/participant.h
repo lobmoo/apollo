@@ -25,6 +25,7 @@
 #include "cyber/transport/rtps/underlay_message_type.h"
 #include "fastrtps/Domain.h"
 #include "fastrtps/attributes/ParticipantAttributes.h"
+#include "fastdds/dds/domain/DomainParticipantFactory.hpp"
 #include "fastrtps/participant/Participant.h"
 #include "fastrtps/participant/ParticipantListener.h"
 #include "fastrtps/rtps/common/Locator.h"
@@ -39,25 +40,25 @@ using ParticipantPtr = std::shared_ptr<Participant>;
 class Participant {
  public:
   Participant(const std::string& name, int send_port,
-              eprosima::fastrtps::ParticipantListener* listener = nullptr);
+              eprosima::fastdds::dds::DomainParticipantListener* listener = nullptr);
   virtual ~Participant();
 
   void Shutdown();
 
-  eprosima::fastrtps::Participant* fastrtps_participant();
+  eprosima::fastdds::dds::DomainParticipant* fastrtps_participant();
   bool is_shutdown() const { return shutdown_.load(); }
 
  private:
   void CreateFastRtpsParticipant(
       const std::string& name, int send_port,
-      eprosima::fastrtps::ParticipantListener* listener);
+      eprosima::fastdds::dds::DomainParticipantListener* listener);
 
   std::atomic<bool> shutdown_;
   std::string name_;
   int send_port_;
-  eprosima::fastrtps::ParticipantListener* listener_;
+  eprosima::fastdds::dds::DomainParticipantListener* listener_;
   UnderlayMessagePubSubType type_;
-  eprosima::fastrtps::Participant* fastrtps_participant_;
+  eprosima::fastdds::dds::DomainParticipant* fastrtps_participant_;
   std::mutex mutex_;
 };
 
