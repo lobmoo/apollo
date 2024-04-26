@@ -6,10 +6,13 @@
         config {
             name : "common"
             readers {
-                channel: "/apollo/prediction"
+                channel: "/apollo/test0"
             }
             readers {
-                channel: "/apollo/test"
+                channel: "/apollo/test1"
+            }
+            readers {
+                channel: "/apollo/test2"
             }
         }
       }

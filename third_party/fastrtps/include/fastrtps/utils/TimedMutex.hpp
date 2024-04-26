@@ -23,16 +23,10 @@
 #include <iostream>
 
 #if defined(_WIN32)
-
-#if defined(_MSC_FULL_VER) && _MSC_FULL_VER >= 193632528
-#include <mutex>
-#else
 #include <thread>
 extern int clock_gettime(
         int,
         struct timespec* tv);
-#endif // if defined(_MSC_FULL_VER) && _MSC_FULL_VER >= 193632528
-
 #elif _GTHREAD_USE_MUTEX_TIMEDLOCK
 #include <mutex>
 #else
@@ -43,14 +37,8 @@ namespace eprosima {
 namespace fastrtps {
 
 #if defined(_WIN32)
-
-#if defined(_MSC_FULL_VER) && _MSC_FULL_VER >= 193632528
-using TimedMutex = std::timed_mutex;
-using RecursiveTimedMutex = std::recursive_timed_mutex;
-#else
 class TimedMutex
 {
-
 public:
 
     TimedMutex()
@@ -89,7 +77,7 @@ public:
     bool try_lock_until(
             const std::chrono::time_point<Clock, Duration>& abs_time)
     {
-        std::chrono::nanoseconds nsecs = abs_time - Clock::now();
+        std::chrono::nanoseconds nsecs = abs_time - std::chrono::steady_clock::now();
 
         if (0 < nsecs.count())
         {
@@ -165,7 +153,7 @@ public:
     bool try_lock_until(
             const std::chrono::time_point<Clock, Duration>& abs_time)
     {
-        std::chrono::nanoseconds nsecs = abs_time - Clock::now();
+        std::chrono::nanoseconds nsecs = abs_time - std::chrono::steady_clock::now();
         if (0 < nsecs.count())
         {
             struct timespec max_wait = {
@@ -194,8 +182,6 @@ private:
 
     _Mtx_t mutex_;
 };
-#endif // if defined(_MSC_FULL_VER) && _MSC_FULL_VER >= 193632528
-
 #elif _GTHREAD_USE_MUTEX_TIMEDLOCK || !defined(__unix__)
 using TimedMutex = std::timed_mutex;
 using RecursiveTimedMutex = std::recursive_timed_mutex;
@@ -240,7 +226,7 @@ public:
     bool try_lock_until(
             const std::chrono::time_point<Clock, Duration>& abs_time)
     {
-        std::chrono::nanoseconds nsecs = abs_time - Clock::now();
+        std::chrono::nanoseconds nsecs = abs_time - std::chrono::steady_clock::now();
         struct timespec max_wait = {
             0, 0
         };
@@ -311,7 +297,7 @@ public:
     bool try_lock_until(
             const std::chrono::time_point<Clock, Duration>& abs_time)
     {
-        std::chrono::nanoseconds nsecs = abs_time - Clock::now();
+        std::chrono::nanoseconds nsecs = abs_time - std::chrono::steady_clock::now();
         struct timespec max_wait = {
             0, 0
         };

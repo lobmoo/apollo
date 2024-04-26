@@ -123,11 +123,7 @@ public:
     //!Indicates if the Writer is synchronous or asynchronous
     RTPSWriterPublishMode mode;
 
-    /**
-     * @brief Throughput controller, always the last one to apply
-     *
-     * @deprecated Use flow_controllers on RTPSParticipantAttributes
-     */
+    // Throughput controller, always the last one to apply
     ThroughputControllerDescriptor throughputController;
 
     //! Disable the sending of heartbeat piggybacks.

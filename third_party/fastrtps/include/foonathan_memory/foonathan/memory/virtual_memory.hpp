@@ -1,5 +1,6 @@
-// Copyright (C) 2015-2023 Jonathan Müller and foonathan/memory contributors
-// SPDX-License-Identifier: Zlib
+// Copyright (C) 2015-2021 Müller <jonathanmueller.dev@gmail.com>
+// This file is subject to the license terms in the LICENSE file
+// found in the top-level directory of this distribution.
 
 #ifndef FOONATHAN_MEMORY_VIRTUAL_MEMORY_HPP_INCLUDED
 #define FOONATHAN_MEMORY_VIRTUAL_MEMORY_HPP_INCLUDED
@@ -37,14 +38,7 @@ namespace foonathan
         /// All virtual memory allocations must be multiple of this size.
         /// It is usually 4KiB.
         /// \ingroup allocator
-        /// \deprecated use \ref get_virtual_memory_page_size instead.
         extern const std::size_t virtual_memory_page_size;
-
-        /// \returns the page size of the virtual memory.
-        /// All virtual memory allocations must be multiple of this size.
-        /// It is usually 4KiB.
-        /// \ingroup allocator
-        std::size_t get_virtual_memory_page_size() noexcept;
 
         /// Reserves virtual memory.
         /// \effects Reserves the given number of pages.

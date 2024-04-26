@@ -8,12 +8,12 @@ set(CMAKE_IMPORT_FILE_VERSION 1)
 # Import target "foonathan_memory" for configuration ""
 set_property(TARGET foonathan_memory APPEND PROPERTY IMPORTED_CONFIGURATIONS NOCONFIG)
 set_target_properties(foonathan_memory PROPERTIES
-  IMPORTED_LOCATION_NOCONFIG "${_IMPORT_PREFIX}/lib/libfoonathan_memory-0.7.3.so"
-  IMPORTED_SONAME_NOCONFIG "libfoonathan_memory-0.7.3.so"
+  IMPORTED_LOCATION_NOCONFIG "${_IMPORT_PREFIX}/lib/libfoonathan_memory-0.7.1.so"
+  IMPORTED_SONAME_NOCONFIG "libfoonathan_memory-0.7.1.so"
   )
 
 list(APPEND _IMPORT_CHECK_TARGETS foonathan_memory )
-list(APPEND _IMPORT_CHECK_FILES_FOR_foonathan_memory "${_IMPORT_PREFIX}/lib/libfoonathan_memory-0.7.3.so" )
+list(APPEND _IMPORT_CHECK_FILES_FOR_foonathan_memory "${_IMPORT_PREFIX}/lib/libfoonathan_memory-0.7.1.so" )
 
 # Import target "foonathan_memory_node_size_debugger" for configuration ""
 set_property(TARGET foonathan_memory_node_size_debugger APPEND PROPERTY IMPORTED_CONFIGURATIONS NOCONFIG)

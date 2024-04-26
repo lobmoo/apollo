@@ -1,5 +1,6 @@
-// Copyright (C) 2015-2023 Jonathan Müller and foonathan/memory contributors
-// SPDX-License-Identifier: Zlib
+// Copyright (C) 2015-2021 Müller <jonathanmueller.dev@gmail.com>
+// This file is subject to the license terms in the LICENSE file
+// found in the top-level directory of this distribution.
 
 /// \file
 /// Configuration macros.
@@ -139,7 +140,7 @@
 /// Set to `1` to disable automatic lifetime managment of the per-thread stack,
 /// requires managing it through the \ref foonathan::memory::temporary_stack_initializer.
 /// Set to `0` to disable the per-thread stack completely.
-/// \ref foonathan::memory::get_temporary_stack() will abort the program upon call.
+/// \ref get_temporary_stack() will abort the program upon call.
 /// \ingroup allocator
 #define FOONATHAN_MEMORY_TEMPORARY_STACK_MODE 2
 #endif

@@ -38,7 +38,7 @@ struct test_UDPv4TransportDescriptor : public SocketTransportDescriptor
 
     //! Test shim parameters
     //! Percentage of data messages being dropped
-    mutable std::atomic<uint8_t> dropDataMessagesPercentage;
+    uint8_t dropDataMessagesPercentage;
     //! Filtering function for dropping data messages
     filter drop_data_messages_filter_;
     //! Flag to enable dropping of discovery Participant DATA(P) messages
@@ -48,26 +48,24 @@ struct test_UDPv4TransportDescriptor : public SocketTransportDescriptor
     //! Flag to enable dropping of discovery Reader DATA(R) messages
     bool dropSubscriptionBuiltinTopicData;
     //! Percentage of data fragments being dropped
-    mutable std::atomic<uint8_t> dropDataFragMessagesPercentage;
+    uint8_t dropDataFragMessagesPercentage;
     //! Filtering function for dropping data fragments messages
     filter drop_data_frag_messages_filter_;
     //! Percentage of heartbeats being dropped
-    mutable std::atomic<uint8_t> dropHeartbeatMessagesPercentage;
+    uint8_t dropHeartbeatMessagesPercentage;
     //! Filtering function for dropping heartbeat messages
     filter drop_heartbeat_messages_filter_;
     //! Percentage of AckNacks being dropped
-    mutable std::atomic<uint8_t> dropAckNackMessagesPercentage;
+    uint8_t dropAckNackMessagesPercentage;
     //! Filtering function for dropping AckNacks
     filter drop_ack_nack_messages_filter_;
     //! Percentage of gap messages being dropped
-    mutable std::atomic<uint8_t> dropGapMessagesPercentage;
+    uint8_t dropGapMessagesPercentage;
     //! Filtering function for dropping gap messages
     filter drop_gap_messages_filter_;
-    // General filtering function for all kind of sub-messages (indiscriminate)
-    filter sub_messages_filter_;
 
     // General drop percentage (indiscriminate)
-    mutable std::atomic<uint8_t> percentageOfMessagesToDrop;
+    uint8_t percentageOfMessagesToDrop;
     // General filtering function for all kind of messages (indiscriminate)
     filter messages_filter_;
 
@@ -91,19 +89,11 @@ struct test_UDPv4TransportDescriptor : public SocketTransportDescriptor
 
     //! Copy constructor
     RTPS_DllAPI test_UDPv4TransportDescriptor(
-            const test_UDPv4TransportDescriptor& t) = delete;
+            const test_UDPv4TransportDescriptor& t) = default;
 
     //! Copy assignment
     RTPS_DllAPI test_UDPv4TransportDescriptor& operator =(
-            const test_UDPv4TransportDescriptor& t) = delete;
-
-    //! Move constructor
-    RTPS_DllAPI test_UDPv4TransportDescriptor(
-            test_UDPv4TransportDescriptor&& t) = delete;
-
-    //! Move assignment
-    RTPS_DllAPI test_UDPv4TransportDescriptor& operator =(
-            test_UDPv4TransportDescriptor&& t) = delete;
+            const test_UDPv4TransportDescriptor& t) = default;
 
     //! Comparison operator
     // Filters are not included

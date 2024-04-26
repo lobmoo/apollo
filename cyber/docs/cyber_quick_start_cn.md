@@ -164,7 +164,6 @@ bash apollo.sh build
 
 ```bash
 source cyber/setup.bash
-# 从终端观察输出
 export GLOG_alsologtostderr=1
 ```
 

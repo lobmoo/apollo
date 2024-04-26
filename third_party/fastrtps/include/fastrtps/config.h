@@ -16,9 +16,9 @@
 #define _FASTRTPS_CONFIG_H_
 
 #define FASTRTPS_VERSION_MAJOR 2
-#define FASTRTPS_VERSION_MINOR 10
-#define FASTRTPS_VERSION_MICRO 3
-#define FASTRTPS_VERSION_STR "2.10.3"
+#define FASTRTPS_VERSION_MINOR 6
+#define FASTRTPS_VERSION_MICRO 4
+#define FASTRTPS_VERSION_STR "2.6.4"
 
 #define GEN_API_VER 1
 
@@ -47,6 +47,22 @@
 #define HAVE_CXX11 1
 #endif /* ifndef HAVE_CXX11 */
 
+// C++0x support defines
+#ifndef HAVE_CXX0X
+#define HAVE_CXX0X 1
+#endif /* ifndef HAVE_CXX0X */
+
+// C++ constexpr support
+#ifndef HAVE_CXX_CONSTEXPR
+#define HAVE_CXX_CONSTEXPR 1
+#endif /* ifndef HAVE_CXX_CONSTEXPR */
+
+#if HAVE_CXX_CONSTEXPR
+#define CONSTEXPR constexpr
+#else
+#define CONSTEXPR const
+#endif /* if HAVE_CXX_CONSTEXPR */
+
 // Endianness defines
 #ifndef FASTDDS_IS_BIG_ENDIAN_TARGET
 #define FASTDDS_IS_BIG_ENDIAN_TARGET 0
@@ -67,7 +83,7 @@
 
 // TLS support
 #ifndef TLS_FOUND
-#define TLS_FOUND 0
+#define TLS_FOUND 1
 #endif /* ifndef TLS_FOUND */
 
 // Strict real-time
@@ -77,15 +93,8 @@
 
 /* Log Macros */
 
-// Enable compilation for eProsima Log Macros
-#ifndef ENABLE_OLD_LOG_MACROS_
-#define ENABLE_OLD_LOG_MACROS_ 1
-#endif /* ifndef ENABLE_OLD_LOG_MACROS_ */
-
 // Log Info
-#ifndef FASTDDS_ENFORCE_LOG_INFO
 /* #undef FASTDDS_ENFORCE_LOG_INFO */
-#endif
 #ifndef HAVE_LOG_NO_INFO
 #define HAVE_LOG_NO_INFO 1
 #endif /* ifndef HAVE_LOG_NO_INFO */
@@ -101,7 +110,7 @@
 #endif /* ifndef HAVE_LOG_NO_ERROR */
 
 // Statistics
-#define FASTDDS_STATISTICS
+/* #undef FASTDDS_STATISTICS */
 
 // Deprecated macro
 #if __cplusplus >= 201402L

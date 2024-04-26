@@ -29,19 +29,34 @@ int main(int argc, char *argv[]) {
   // create talker node
   auto talker_node = apollo::cyber::CreateNode("channel_test_writer");
   // create talker
-  auto talker = talker_node->CreateWriter<Driver>("/apollo/test");
+  auto talker0 = talker_node->CreateWriter<Driver>("/apollo/test0");
+  auto talker1 = talker_node->CreateWriter<Driver>("/apollo/test1");
+  auto talker2 = talker_node->CreateWriter<Driver>("/apollo/test2");
   Rate rate(2.0);
 
   std::string content("apollo_test");
   while (apollo::cyber::OK()) {
     static uint64_t seq = 0;
-    auto msg = std::make_shared<Driver>();
-    msg->set_timestamp(Time::Now().ToNanosecond());
-    msg->set_msg_id(seq++);
-    msg->set_content(content + std::to_string(seq - 1));
-    talker->Write(msg);
+    auto msg0 = std::make_shared<Driver>();
+    msg0->set_timestamp(Time::Now().ToNanosecond());
+    msg0->set_msg_id(seq++);
+    msg0->set_content(content + std::to_string(seq - 1));
+    talker0->Write(msg0);
+
+    auto msg1 = std::make_shared<Driver>();
+    msg1->set_timestamp(Time::Now().ToNanosecond());
+    msg1->set_msg_id(seq);
+    msg1->set_content(content + ": msg1: " + std::to_string(seq));
+    talker1->Write(msg1);
+
+    auto msg2 = std::make_shared<Driver>();
+    msg2->set_timestamp(Time::Now().ToNanosecond());
+    msg2->set_msg_id(seq);
+    msg2->set_content(content + ": msg2: " + std::to_string(seq));
+    talker2->Write(msg2);
     AINFO << "/apollo/test sent message, seq=" << (seq - 1) << ";";
     rate.Sleep();
+    seq++;
   }
   return 0;
 }

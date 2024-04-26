@@ -1,5 +1,6 @@
-// Copyright (C) 2015-2023 Jonathan Müller and foonathan/memory contributors
-// SPDX-License-Identifier: Zlib
+// Copyright (C) 2015-2021 Müller <jonathanmueller.dev@gmail.com>
+// This file is subject to the license terms in the LICENSE file
+// found in the top-level directory of this distribution.
 
 #ifndef FOONATHAN_MEMORY_MEMORY_POOL_HPP_INCLUDED
 #define FOONATHAN_MEMORY_MEMORY_POOL_HPP_INCLUDED
@@ -60,8 +61,6 @@ namespace foonathan
             /// \returns The minimum block size required for certain number of \concept{concept_node,node}.
             /// \requires \c node_size must be a valid \concept{concept_node,node size}
             /// and \c number_of_nodes must be a non-zero value.
-            /// \note MSVC's implementation of \c std::list for example is never empty and always allocates proxy nodes.
-            /// To get enough memory for \c N elements of a list, \c number_of_nodes needs to include the proxy count in addition to \c N.
             static constexpr std::size_t min_block_size(std::size_t node_size,
                                                         std::size_t number_of_nodes) noexcept
             {
@@ -102,8 +101,8 @@ namespace foonathan
             memory_pool& operator=(memory_pool&& other) noexcept
             {
                 leak_checker::operator=(detail::move(other));
-                arena_     = detail::move(other.arena_);
-                free_list_ = detail::move(other.free_list_);
+                arena_                = detail::move(other.arena_);
+                free_list_            = detail::move(other.free_list_);
                 return *this;
             }
             /// @}
