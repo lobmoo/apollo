@@ -29,6 +29,7 @@
 #include "fastrtps/participant/Participant.h"
 #include "fastrtps/participant/ParticipantListener.h"
 #include "fastrtps/rtps/common/Locator.h"
+#include <fastdds/dds/topic/TypeSupport.hpp>
 
 namespace apollo {
 namespace cyber {
@@ -57,7 +58,8 @@ class Participant {
   std::string name_;
   int send_port_;
   eprosima::fastdds::dds::DomainParticipantListener* listener_;
-  UnderlayMessagePubSubType type_;
+  //UnderlayMessagePubSubType type_;
+  eprosima::fastdds::dds::TypeSupport type_;
   eprosima::fastdds::dds::DomainParticipant* fastrtps_participant_;
   std::mutex mutex_;
 };
