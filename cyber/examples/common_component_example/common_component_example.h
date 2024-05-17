@@ -30,3 +30,4 @@ class CommonComponentSample : public Component<Driver, Driver, Driver> {
             const std::shared_ptr<Driver>& msg2)override;
 };
 CYBER_REGISTER_COMPONENT(CommonComponentSample)
+

@@ -15,6 +15,8 @@
  *****************************************************************************/
 #include "cyber/examples/common_component_example/common_component_example.h"
 
+using namespace apollo::cyber;
+
 bool CommonComponentSample::Init() {
   AINFO << "Commontest component init";
   return true;
